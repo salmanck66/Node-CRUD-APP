@@ -9,8 +9,8 @@ const adder = fs.readFileSync('./views/userdata.html','utf-8')
 const jsonconvert = JSON.parse(fs.readFileSync('./json/data.json',`utf-8`))
 const queryString=require('querystring')
 const jsonFilePath = './json/data.json'
+const editFormPage = fs.readFileSync('./views/editform.html', 'utf-8')
 
-console.log(jsonconvert)
 
 function readJson()
 {
@@ -31,14 +31,14 @@ function writeJson(data)
     fs.writeFileSync(jsonFilePath,jsonString)
 }
 
-function replaceHtml(template, jsonfile) {
+function replaceHtml(template, jsonfile,index) {
     let out = template.replace('{{%name%}}', jsonfile.name)
     out = out.replace('{{%age%}}', jsonfile.age)
     out = out.replace('{{%phno%}}', jsonfile.phonenumber)
     out = out.replace('{{%bgroup%}}', jsonfile.bloodgroup)
+    out = out.replace('{{%editLink%}}', `<a href="/edit/${index}" class="btn btn-primary">Edit</a>`)
     return out;
 }
-
 
 server = http.createServer()
 server.listen(8001,'127.0.0.1',()=>
@@ -51,12 +51,16 @@ server.on('request',(req,res)=>
     // console.log(req)
     console.log("New request recieved")
     let urlstore = req.url
+    console.log('Raw URL:', urlstore);
     if (urlstore === "/" || urlstore === "/home" )
     {
+        
         let store = ''; // Initialize an empty string to store the content
-        for (const user of jsonconvert) {
-            store += replaceHtml(adder, user);
+        for (let i = 0; i < jsonconvert.length; i++) {
+            const user = jsonconvert[i];
+            store += replaceHtml(adder, user, i); // Pass the index i to identify the user
         }
+
         res.writeHead(200, { 'content-type': 'text/html' });
         res.end(home.replace('{{%%CONTENT%%}}', store));
     }else
@@ -92,13 +96,53 @@ server.on('request',(req,res)=>
             res.writeHead(200, { 'content-type': 'text/html' });
             res.end(home.replace('{{%%CONTENT%%}}', store));
         });
+    }else
+    if (urlstore.startsWith('/edit/')) {
+        const splitUrl = urlstore.split('/');
+        console.log('Split URL:', splitUrl);
+        const index = parseInt(splitUrl[2]);
+        console.log('Index:', index);
+
+        if(!isNaN(index) && index>=0 && index<jsonconvert.length)
+        {
+            const edituser = jsonconvert[index]
+            const editform = editFormPage
+            const filledForm = replaceHtml(editform,edituser,index)
+            res.writeHead(200, { 'content-type': 'text/html' })
+            res.end(filledForm);
+        }
+    }else
+    if (urlstore === '/update' && req.method === 'POST') {
+        let userData = '';
+        req.on('data', (chunk) => {
+            userData += chunk;
+        });
+        req.on('end', () => {
+            const parsedData = queryString.parse(userData);
+            const index = parseInt(parsedData.index);
+            console.log(index)
+            console.log(jsonconvert.length)
+
+            if (!isNaN(index) && index >= 0 && index < jsonconvert.length) {
+                jsonconvert[index] = {
+                    name: parsedData.name,
+                    age: parsedData.age,
+                    phonenumber: parsedData.phno,
+                    bloodgroup: parsedData.bgroup
+                };
+                writeJson(jsonconvert);
+                res.writeHead(302, { 'Location': '/home' });
+                res.end();
+            } else {
+                res.writeHead(404, { 'content-type': 'text/html' });
+                res.end('<h1>There is error</h1>');
+            }
+        });
     }
     else
     {
         res.writeHead(404,{'content-type': 'text/html'})
-        res.end("<h1>Bad Request<h1>")
+        res.end("<h1>Page Not Found<h1>")
     }
 })
-
-
 
