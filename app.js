@@ -37,7 +37,7 @@ function replaceHtml(template, jsonfile,index) {
     out = out.replace('{{%phno%}}', jsonfile.phonenumber)
     out = out.replace('{{%bgroup%}}', jsonfile.bloodgroup)
     out = out.replace('{{%editLink%}}', `<a href="/edit/${index}" class="btn btn-primary">Edit</a>`)
-    out = out.replace('{{%index%}}', index);y
+    out = out.replace('{{%index%}}', index);
     return out;
 }
 
