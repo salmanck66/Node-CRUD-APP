@@ -37,6 +37,7 @@ function replaceHtml(template, jsonfile,index) {
     out = out.replace('{{%phno%}}', jsonfile.phonenumber)
     out = out.replace('{{%bgroup%}}', jsonfile.bloodgroup)
     out = out.replace('{{%editLink%}}', `<a href="/edit/${index}" class="btn btn-primary">Edit</a>`)
+    out = out.replace('{{%deleteLink%}}', `<a href="/delete/${index}" class="btn btn-danger">Delete</a>`);
     out = out.replace('{{%index%}}', index);
     return out;
 }
@@ -54,7 +55,6 @@ server.on('request',(req,res)=>
     let urlstore = req.url
     if (urlstore === "/" || urlstore === "/home" )
     {
-        
         let store = ''; // Initialize an empty string to store the content
         for (let i = 0; i < jsonconvert.length; i++) {
             const user = jsonconvert[i];
@@ -66,7 +66,6 @@ server.on('request',(req,res)=>
     }else
     if (urlstore === "/adduser")
     {
-        
         res.end(signup)
     }else
     if (urlstore === "/useradded")
@@ -91,10 +90,8 @@ server.on('request',(req,res)=>
             for (const user of existingData) {
                 store += replaceHtml(adder, user);
             }
-    
-            // Send the updated content as the response
             res.writeHead(200, { 'content-type': 'text/html' });
-            res.end(home.replace('{{%%CONTENT%%}}', store));
+            res.end(home.replace('{{%%CONTENT%%}}', store))
         });
     }else
     if (urlstore.startsWith('/edit/')) {
@@ -134,6 +131,25 @@ server.on('request',(req,res)=>
                 res.end('<h1>There is error</h1>');
             }
         });
+    }
+    else
+    if(urlstore.startsWith('/delete/'))
+    {
+        const splitUrl = urlstore.split('/');
+        const index = parseInt(splitUrl[2]);
+        console.log('Split url'+splitUrl)
+        console.log('index'+index)
+
+        if (!isNaN(index) && index >= 0 && index < jsonconvert.length) {
+            jsonconvert.splice(index, 1); // Remove the element at the specified index
+            writeJson(jsonconvert);
+            res.writeHead(302, { 'Location': '/home' });
+            res.end();
+        } else {
+            res.writeHead(404, { 'content-type': 'text/html' });
+            res.end('<h1>There is an error</h1>');
+        }
+
     }
     else
     {
