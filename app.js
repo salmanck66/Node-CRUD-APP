@@ -37,6 +37,7 @@ function replaceHtml(template, jsonfile,index) {
     out = out.replace('{{%phno%}}', jsonfile.phonenumber)
     out = out.replace('{{%bgroup%}}', jsonfile.bloodgroup)
     out = out.replace('{{%editLink%}}', `<a href="/edit/${index}" class="btn btn-primary">Edit</a>`)
+    out = out.replace('{{%index%}}', index);y
     return out;
 }
 
@@ -51,7 +52,6 @@ server.on('request',(req,res)=>
     // console.log(req)
     console.log("New request recieved")
     let urlstore = req.url
-    console.log('Raw URL:', urlstore);
     if (urlstore === "/" || urlstore === "/home" )
     {
         
@@ -99,9 +99,7 @@ server.on('request',(req,res)=>
     }else
     if (urlstore.startsWith('/edit/')) {
         const splitUrl = urlstore.split('/');
-        console.log('Split URL:', splitUrl);
         const index = parseInt(splitUrl[2]);
-        console.log('Index:', index);
 
         if(!isNaN(index) && index>=0 && index<jsonconvert.length)
         {
@@ -120,8 +118,6 @@ server.on('request',(req,res)=>
         req.on('end', () => {
             const parsedData = queryString.parse(userData);
             const index = parseInt(parsedData.index);
-            console.log(index)
-            console.log(jsonconvert.length)
 
             if (!isNaN(index) && index >= 0 && index < jsonconvert.length) {
                 jsonconvert[index] = {
