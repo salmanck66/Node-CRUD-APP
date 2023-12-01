@@ -85,13 +85,12 @@ server.on('request',(req,res)=>
             existingData.push(parsedData);
             writeJson(existingData);
     
-            // Update the content with the new user data
             let store = '';
             for (const user of existingData) {
                 store += replaceHtml(adder, user);
             }
-            res.writeHead(200, { 'content-type': 'text/html' });
-            res.end(home.replace('{{%%CONTENT%%}}', store))
+            res.writeHead(302  , { 'Location': '/' });
+            res.end();
         });
     }else
     if (urlstore.startsWith('/edit/')) {
