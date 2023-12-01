@@ -6,6 +6,7 @@ const path = require('path')
 const home = fs.readFileSync('./views/index.html','utf-8')
 const signup = fs.readFileSync('./views/form.html','utf-8')
 const adder = fs.readFileSync('./views/userdata.html','utf-8')
+const dsubmit = fs.readFileSync('./views/submitc.html','utf-8')
 const jsonconvert = JSON.parse(fs.readFileSync('./json/data.json',`utf-8`))
 const queryString=require('querystring')
 const jsonFilePath = './json/data.json'
@@ -89,8 +90,8 @@ server.on('request',(req,res)=>
             for (const user of existingData) {
                 store += replaceHtml(adder, user);
             }
-            res.writeHead(302  , { 'Location': '/' });
-            res.end();
+            res.writeHead(302)
+            res.end(dsubmit);
         });
     }else
     if (urlstore.startsWith('/edit/')) {
