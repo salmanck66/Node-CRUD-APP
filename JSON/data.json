@@ -1,15 +1,9 @@
 [
   {
-    "name": "Adila b",
+    "name": "Adila Millath",
     "age": "24",
     "phonenumber": "9292929292",
     "bloodgroup": "AB+"
-  },
-  {
-    "name": "Subin",
-    "age": "18",
-    "phonenumber": "2222222222",
-    "bloodgroup": "A+"
   },
   {
     "name": "Subin A",
@@ -33,6 +27,24 @@
     "name": "Arshak",
     "age": "28",
     "phonenumber": "9999999990",
+    "bloodgroup": "A+"
+  },
+  {
+    "name": "Salman",
+    "age": "23",
+    "phonenumber": "9999999999",
     "bloodgroup": "AB+"
+  },
+  {
+    "name": "Nishmal",
+    "age": "22",
+    "phonenumber": "9292929292",
+    "bloodgroup": "B+"
+  },
+  {
+    "name": "Dummy",
+    "age": "60",
+    "phonenumber": "9999999988",
+    "bloodgroup": "A+"
   }
 ]

@@ -1,14 +1,12 @@
 const http = require('http')
 const fs = require('fs')
-const url = require('url')
-const events = require('events')
-const path = require('path')
+const queryString=require('querystring')
+
 const home = fs.readFileSync('./views/index.html','utf-8')
 const signup = fs.readFileSync('./views/form.html','utf-8')
 const adder = fs.readFileSync('./views/userdata.html','utf-8')
 const dsubmit = fs.readFileSync('./views/submitc.html','utf-8')
 const jsonconvert = JSON.parse(fs.readFileSync('./json/data.json',`utf-8`))
-const queryString=require('querystring')
 const jsonFilePath = './json/data.json'
 const editFormPage = fs.readFileSync('./views/editform.html', 'utf-8')
 
@@ -23,7 +21,6 @@ function readJson()
     {
         return []
     }
-    
 }
 
 function writeJson(data)
@@ -61,7 +58,6 @@ server.on('request',(req,res)=>
             const user = jsonconvert[i];
             store += replaceHtml(adder, user, i); // Pass the index i to identify the user
         }
-
         res.writeHead(200, { 'content-type': 'text/html' });
         res.end(home.replace('{{%%CONTENT%%}}', store));
     }else
@@ -157,4 +153,3 @@ server.on('request',(req,res)=>
         res.end("<h1>Page Not Found<h1>")
     }
 })
-
